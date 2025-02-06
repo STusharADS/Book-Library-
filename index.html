@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Library Organizer</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0D0D0D, #1A237E);
+            color: white;
+        }
+        header {
+            background: linear-gradient(135deg, #1A237E, #0D0D0D);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        header h1 {
+            font-size: 30px;
+        }
+        .navbar {
+            display: flex;
+            justify-content: center;
+            background: #0D0D0D;
+            padding: 10px 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .navbar a:hover {
+            background-color: #1A237E;
+            border-radius: 5px;
+        }
+        .container {
+            width: 90%;
+            margin: 20px auto;
+        }
+        .search-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #1A237E;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .search-bar input[type="text"] {
+            padding: 12px;
+            width: 70%;
+            font-size: 16px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background-color: #333;
+            color: white;
+        }
+        .search-bar button {
+            padding: 12px 20px;
+            background-color: #1A237E;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .search-bar button:hover {
+            background-color: #0D0D0D;
+        }
+        .book-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-evenly;
+        }
+        .book-item {
+            background-color: #333;
+            border-radius: 12px;
+            padding: 15px;
+            width: 220px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .book-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        .book-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .book-info h3 {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .book-info p {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .rating {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 10px;
+        }
+        .rating .star {
+            font-size: 20px;
+            color: #FFD700;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #555;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .progress-bar div {
+            height: 10px;
+            background-color: #4caf50;
+            width: 0;
+            border-radius: 5px;
+        }
+        .add-to-library {
+            background-color: #28a745;
+            color: white;
+            padding: 5px 10px;
+            margin-top: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .add-to-library:hover {
+            background-color: #218838;
+        }
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 24px;
+            color: white;
+        }
+        .loading-spinner div {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #1A237E;
+            margin: 0 5px;
+            animation: loading 1s infinite;
+        }
+        .loading-spinner div:nth-child(1) {
+            animation-delay: 0s;
+        }
+        .loading-spinner div:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+        .loading-spinner div:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+        @keyframes loading {
+            0% {
+                transform: scale(0.5);
+            }
+            50% {
+                transform: scale(1.5);
+            }
+            100% {
+                transform: scale(0.5);
+            }
+        }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .book-list {
+                flex-direction: column;
+                align-items: center;
+            }
+            .book-item {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Book Library Organizer</h1>
+</header>
+
+<div class="navbar">
+    <a href="#" onclick="filterByCategory('all')">All</a>
+    <a href="#" onclick="filterByCategory('fiction')">Fiction</a>
+    <a href="#" onclick="filterByCategory('non-fiction')">Non-fiction</a>
+    <a href="#" onclick="filterByCategory('science')">Science</a>
+    <a href="#" onclick="filterByCategory('history')">History</a>
+</div>
+
+<div class="container">
+    <div class="search-bar">
+        <input type="text" id="searchQuery" placeholder="Search for books..." oninput="suggestBooks()" />
+        <button onclick="searchBooks()">Search</button>
+    </div>
+    <div id="autocomplete-suggestions" class="autocomplete-suggestions"></div>
+    <div id="loadingSpinner" class="loading-spinner" style="display:none;">
+        <div></div><div></div><div></div>
+    </div>
+    <div class="book-list" id="bookList">
+        <!-- Book items will be dynamically added here -->
+    </div>
+</div>
+
+<script>
+    const bookListContainer = document.getElementById('bookList');
+    const autocompleteContainer = document.getElementById('autocomplete-suggestions');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+
+    let currentCategory = 'all';
+
+    // Function to search books using Google Books API
+    function searchBooks() {
+        const query = document.getElementById('searchQuery').value;
+        if (!query) return;
+
+        showLoading(true);
+        fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                const books = data.items || [];
+                hideRecommendations();
+                displayBooks(books);
+                showLoading(false);
+            });
+    }
+
+    // Function to suggest books based on input (autocomplete)
+    function suggestBooks() {
+        const query = document.getElementById('searchQuery').value;
+        if (!query) {
+            autocompleteContainer.innerHTML = '';
+            return;
+        }
+
+        fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                const books = data.items || [];
+                autocompleteContainer.innerHTML = '';
+                books.forEach(book => {
+                    const suggestion = document.createElement('div');
+                    suggestion.textContent = book.volumeInfo.title;
+                    suggestion.onclick = () => {
+                        document.getElementById('searchQuery').value = book.volumeInfo.title;
+                        autocompleteContainer.innerHTML = '';
+                        searchBooks();
+                    };
+                    autocompleteContainer.appendChild(suggestion);
+                });
+            });
+    }
+
+    // Function to filter books by category
+    function filterByCategory(category) {
+        currentCategory = category;
+        if (category !== 'all') {
+            fetch(`https://www.googleapis.com/books/v1/volumes?q=subject:${category}`)
+                .then(response => response.json())
+                .then(data => {
+                    const books = data.items || [];
+                    displayBooks(books);
+                });
+        } else {
+            fetchPopularBooks();
+        }
+    }
+
+    // Function to hide recommendations section when searching for a specific book
+    function hideRecommendations() {
+        autocompleteContainer.innerHTML = '';
+    }
+
+    // Function to display books in the book list
+    function displayBooks(books) {
+        bookListContainer.innerHTML = '';
+        books.forEach(book => {
+            const bookItem = document.createElement('div');
+            bookItem.classList.add('book-item');
+            const imgUrl = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : 'https://via.placeholder.com/150';
+            const title = book.volumeInfo.title || 'Unknown Title';
+            const authors = book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : 'Unknown Author';
+            const description = book.volumeInfo.description || 'No description available.';
+            const publishedDate = book.volumeInfo.publishedDate || 'Unknown';
+            const pageCount = book.volumeInfo.pageCount || 'N/A';
+            const rating = book.volumeInfo.averageRating || 0; // Get the average rating from the API
+
+            const stars = generateStars(rating); // Generate star elements
+
+            bookItem.innerHTML = `
+                <img src="${imgUrl}" alt="Book Cover">
+                <div class="book-info">
+                    <h3>${title}</h3>
+                    <p>by ${authors}</p>
+                    <div class="rating">${stars}</div>
+                    <p>${publishedDate}</p>
+                    <p>${pageCount} pages</p>
+                    <div class="add-to-library" onclick="addToLibrary('${title}')">Add to Library</div>
+                    <div class="book-details" style="display:none;">
+                        <p>${description}</p>
+                    </div>
+                </div>
+            `;
+
+            bookItem.onclick = () => {
+                const details = bookItem.querySelector('.book-details');
+                details.style.display = details.style.display === 'none' ? 'block' : 'none';
+            };
+
+            bookListContainer.appendChild(bookItem);
+        });
+    }
+
+    // Function to generate stars based on the rating
+    function generateStars(rating) {
+        let stars = '';
+        for (let i = 0; i < 5; i++) {
+            if (i < rating) {
+                stars += '<span class="star">&#9733;</span>'; // Full star
+            } else {
+                stars += '<span class="star">&#9734;</span>'; // Empty star
+            }
+        }
+        return stars;
+    }
+
+    // Function to show loading spinner
+    function showLoading(show) {
+        loadingSpinner.style.display = show ? 'flex' : 'none';
+    }
+
+    // Function to add a book to the user's library and persist in LocalStorage
+    function addToLibrary(title) {
+        let library = JSON.parse(localStorage.getItem('library')) || [];
+        if (!library.includes(title)) {
+            library.push(title);
+            localStorage.setItem('library', JSON.stringify(library));
+            alert(`"${title}" added to your library!`);
+        } else {
+            alert(`"${title}" is already in your library.`);
+        }
+    }
+
+    // Fetch popular books by default
+    fetchPopularBooks();
+
+    // Function to fetch popular books
+    function fetchPopularBooks() {
+        fetch(`https://www.googleapis.com/books/v1/volumes?q=popular`)
+            .then(response => response.json())
+            .then(data => {
+                const books = data.items || [];
+                displayBooks(books);
+            });
+    }
+</script>
+</body>
+</html> 
