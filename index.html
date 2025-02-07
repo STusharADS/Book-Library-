@@ -202,6 +202,7 @@
     <a href="#" onclick="filterByCategory('non-fiction')">Non-fiction</a>
     <a href="#" onclick="filterByCategory('science')">Science</a>
     <a href="#" onclick="filterByCategory('history')">History</a>
+    <a href="#" onclick="viewLibrary()">Library</a>
 </div>
 
 <div class="container">
@@ -357,6 +358,22 @@
         }
     }
 
+    // Function to view the library
+    function viewLibrary() {
+        const library = JSON.parse(localStorage.getItem('library')) || [];
+        if (library.length > 0) {
+            bookListContainer.innerHTML = '';
+            library.forEach(title => {
+                const bookItem = document.createElement('div');
+                bookItem.classList.add('book-item');
+                bookItem.innerHTML = `<h3>${title}</h3>`;
+                bookListContainer.appendChild(bookItem);
+            });
+        } else {
+            bookListContainer.innerHTML = `<p>Your library is empty.</p>`;
+        }
+    }
+
     // Fetch popular books by default
     fetchPopularBooks();
 
@@ -371,4 +388,4 @@
     }
 </script>
 </body>
-</html> 
+</html>
