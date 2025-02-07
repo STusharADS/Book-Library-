@@ -202,6 +202,7 @@
     <a href="#" onclick="filterByCategory('non-fiction')">Non-fiction</a>
     <a href="#" onclick="filterByCategory('science')">Science</a>
     <a href="#" onclick="filterByCategory('history')">History</a>
+    <a href="#" onclick="viewLibrary()">Library</a>
 </div>
 
 <div class="container">
@@ -278,7 +279,7 @@
                     displayBooks(books);
                 });
         } else {
-            fetchPopularBooks();
+            fetchHighlyRatedBooks();
         }
     }
 
@@ -357,12 +358,28 @@
         }
     }
 
-    // Fetch popular books by default
-    fetchPopularBooks();
+    // Function to view the library
+    function viewLibrary() {
+        const library = JSON.parse(localStorage.getItem('library')) || [];
+        if (library.length > 0) {
+            bookListContainer.innerHTML = '';
+            library.forEach(title => {
+                const bookItem = document.createElement('div');
+                bookItem.classList.add('book-item');
+                bookItem.innerHTML = `<h3>${title}</h3>`;
+                bookListContainer.appendChild(bookItem);
+            });
+        } else {
+            bookListContainer.innerHTML = `<p>Your library is empty.</p>`;
+        }
+    }
 
-    // Function to fetch popular books
-    function fetchPopularBooks() {
-        fetch(`https://www.googleapis.com/books/v1/volumes?q=popular`)
+    // Fetch good-rated books by default
+    fetchHighlyRatedBooks();
+
+    // Function to fetch highly rated books
+    function fetchHighlyRatedBooks() {
+        fetch(`https://www.googleapis.com/books/v1/volumes?q=rating:>=4`)
             .then(response => response.json())
             .then(data => {
                 const books = data.items || [];
@@ -371,4 +388,4 @@
     }
 </script>
 </body>
-</html> 
+</html>
